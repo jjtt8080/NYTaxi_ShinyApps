@@ -183,7 +183,7 @@ make_linear_model <- function(s, v)
     predictv
 }
 
-final_model <- function(testDS)
+final_model <- function(testDS, modelSelection)
 {
     testList <- list()
     trainList <- list()
@@ -213,7 +213,7 @@ final_model <- function(testDS)
             next 
         }
             
-        if (i == 1)
+        if (modelSelection=="linear")
         {
             predictionList[[i]] <- 
                 make_xgb_model_prediction(trainList[[i]], testList[[i]])
@@ -264,9 +264,9 @@ modify_test_ds <- function(testds)
     testds <- add_rushhour_ind(testds)
     testds
 }
-predictTripTime<-function(ds)
+predictTripTime<-function(ds, modelSelection)
 {
-    predictTime <- final_model(ds)
+    predictTime <- final_model(ds, modelSelection)
 }
 getMinMaxLatLng <- function()
 {

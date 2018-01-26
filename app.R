@@ -23,10 +23,14 @@ ui <- bootstrapPage(
    
    mainPanel(
        leafletOutput("pickupMapPlot"),
+       
+       h4("Estimated trip duration:"),
+       
        dataTableOutput('result')
    ),
    # Sidebar with a slider input for number of bins 
    sidebarPanel ( 
+      h3("Please enter your pickup / dropoff location information. "),
       dateInput("p1", "pickup_date:"), value= as.character(now())
       ,
       timeInput("t1", "pickup_time", value = strptime("12:34:56", "%H:%M:%S"))
@@ -39,7 +43,7 @@ ui <- bootstrapPage(
       # Show a plot of the generated distribution
       ,
       selectInput("modelInput", "choose a prediction model",
-                  choices= c("eXtreme Gradiant Boost (xgb)",
+                  choices= c("xgb",
                              "linear"), multiple=FALSE, selected="linear")
       ,
       submitButton()
@@ -118,9 +122,9 @@ server <- function(input, output, session) {
         d <- getInput() %>% 
             dplyr::select(pickup_address, dropoff_address,
                           trip_distance)
-        t <- round(predictTripTime(getInput())$trip_duration, digits=2)
+        t <- round(predictTripTime(getInput(), input$modelInput)$trip_duration, digits=2)
         ret <- as.data.frame(as.matrix(cbind(d, t),ncol=4))
-        names(ret) <- c("pickup_addr", "dropoff_addr", "trip_dist", "estimate_trip_duration")
+        names(ret) <- c("pickup_addr", "dropoff_addr", "trip_dist", "estimate_trip_duration(s)")
         ret
     }, options = list(lengthChange = TRUE, paging=FALSE, searching=FALSE)
     )
